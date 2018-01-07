@@ -67,7 +67,7 @@ def ls(path):
 class SingleViewTripletBuilder(object):
     def __init__(self, video_directory, image_size, cli_args, sample_size=500):
         self.frame_size = image_size
-        self._read_angle_directories(video_directory)
+        self._read_video_dir(video_directory)
 
         self._count_frames()
         # The negative example has to be from outside the buffer window. Taken from both sides of
@@ -78,15 +78,14 @@ class SingleViewTripletBuilder(object):
         self.cli_args = cli_args
         self.sample_size = sample_size
 
-    def _read_angle_directories(self, video_directory):
+    def _read_video_dir(self, video_directory):
         self._video_directory = video_directory
-        self._angle_directories = [os.path.join(self._video_directory, p) for p in ls_directories(video_directory)]
-        filenames = ls(self._angle_directories[0])
-        self.angle1_paths = [os.path.join(self._angle_directories[0], f) for f in filenames]
-        self.video_count = len(self.angle1_paths)
+        filenames = ls(video_directory)
+        self.video_paths = [os.path.join(self._video_directory, f) for f in filenames]
+        self.video_count = len(self.video_paths)
 
     def _count_frames(self):
-        frame_lengths = np.array([len(imageio.read(p)) for p in self.angle1_paths])
+        frame_lengths = np.array([len(imageio.read(p)) for p in self.video_paths])
         self.frame_lengths = frame_lengths
         self.cumulative_lengths = np.zeros(len(self.frame_lengths), dtype=np.int32)
         prev = 0
@@ -96,7 +95,7 @@ class SingleViewTripletBuilder(object):
 
     @functools.lru_cache(maxsize=1)
     def get_video(self, index):
-        return read_video(self.angle1_paths[index], self.frame_size)
+        return read_video(self.video_paths[index], self.frame_size)
 
     def sample_triplet(self, snap):
         anchor_index = self.sample_anchor_frame_index()

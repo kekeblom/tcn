@@ -124,7 +124,7 @@ def main():
     optimizer = optim.SGD(tcn.parameters(), lr=arguments.lr_start, momentum=0.9)
     # This will diminish the learning rate at the milestones.
     # 0.1, 0.01, 0.001
-    learning_rate_scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[25, 100, 200], gamma=0.1)
+    learning_rate_scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[100, 500, 1000], gamma=0.1)
 
     ITERATE_OVER_TRIPLETS = 5
 
