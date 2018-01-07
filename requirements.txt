@@ -1,0 +1,6 @@
+numpy
+torch
+imageio
+pillow
+
+# brew install ffmpeg
